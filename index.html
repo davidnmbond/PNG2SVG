@@ -9,24 +9,25 @@
 			padding: 2rem;
 			background: #f9f9f9;
 			color: #000;
+			text-align: center; /* Center-aligns the title and toolbar */
 		}
 		#controls {
 			margin-top: 1rem;
 			margin-bottom: 2rem;
-			display: flex;
+			display: inline-flex; /* Centers the toolbar */
 			flex-wrap: wrap;
 			gap: 1rem;
+			justify-content: center; /* Ensures controls are centered */
 		}
 		.control {
 			display: flex;
 			flex-direction: column;
 			min-width: 150px;
 		}
-		#pngPreview {
+		#pngPreview, #svgPreview {
 			margin-top: 1rem;
 			margin-bottom: 1rem;
 			padding: 2rem;
-			border: 2px dashed #888;
 			border-radius: 8px;
 			text-align: center;
 			color: #555;
@@ -34,7 +35,25 @@
 			cursor: pointer;
 			transition: background 0.2s ease;
 			flex: 1 1 300px;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
 		}
+
+		#pngPreview {
+			border: 2px dashed #888;
+		}
+
+		#svgPreview {
+			border: 2px solid #ccc;
+		}
+
+		#pngPreview h2, #svgPreview h2 {
+			margin-bottom: 1rem;
+			text-align: center;
+		}
+
 		#pngPreview.dragover {
 			background-color: #e0eaff;
 			border-color: #0078d4;
@@ -59,6 +78,7 @@
 			margin-top: 1rem;
 			padding: 0.5rem 1rem;
 			font-size: 1rem;
+			border-radius: 8px; /* Adds rounded corners */
 		}
 		@media (max-width: 600px) {
 			#container {
@@ -91,6 +111,10 @@
 				border: 1px solid #666;
 			}
 		}
+		button:disabled {
+			cursor: not-allowed; /* Prevents the hand cursor */
+			opacity: 0.6; /* Makes the button appear disabled */
+		}
 	</style>
 </head>
 <body>
@@ -113,19 +137,19 @@
 			<label for="colors">Colors: <span id="colorsVal">16</span></label>
 			<input type="range" id="colors" min="2" max="64" step="1" value="16">
 		</div>
+		<a id="downloadLink" href="#" download="output.svg">
+			<button id="downloadButton" disabled>Download SVG</button>
+		</a>
 	</div>
 
 	<div id="container">
 		<div id="pngPreview" class="preview">
-			<h2 id="PngTitle">PNG Preview</h2>
+			<h2 id="PngTitle">Original PNG</h2>
 			<p>Drag PNG file here.</p>
 		</div>
 		<div class="preview" id="svgPreview">
 			<h2>SVG Preview</h2>
 			<div id="svgContent"><p>No SVG generated yet.</p></div>
-			<a id="downloadLink" href="#" download="output.svg" style="display:none;">
-				<button>Download SVG</button>
-			</a>
 		</div>
 	</div>
 
@@ -230,7 +254,10 @@
 			var url = URL.createObjectURL(blob);
 			var link = document.getElementById('downloadLink');
 			link.href = url;
-			link.style.display = 'inline-block';
+
+			// Enable the download button
+			var downloadButton = document.getElementById('downloadButton');
+			downloadButton.disabled = false;
 		};
 		img.src = dataURL;
 	}
