@@ -47,6 +47,7 @@
 
 		#svgPreview {
 			border: 2px solid #ccc;
+			overflow: hidden; /* Prevents overflow of the SVG */
 		}
 
 		#pngPreview h2, #svgPreview h2 {
@@ -114,6 +115,58 @@
 		button:disabled {
 			cursor: not-allowed; /* Prevents the hand cursor */
 			opacity: 0.6; /* Makes the button appear disabled */
+			}
+		#svgContent {
+			width: 100%; /* Ensures the SVG scales to fit the container */
+			height: 100%; /* Ensures the SVG scales to fit the container */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden; /* Prevents overflow if the SVG is too large */
+		}
+
+		#svgContent svg {
+			width: 100%; /* Ensures the SVG scales to fit the container width */
+			height: auto; /* Maintains the aspect ratio */
+			max-height: 100%; /* Ensures the SVG does not exceed the container height */
+		}
+
+		#svgPreview {
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			padding: 2rem;
+			border-radius: 8px;
+			background: #f0f0f0;
+			border: 2px solid #ccc;
+			overflow: hidden; /* Prevents overflow of the SVG */
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		#svgContent {
+			width: 100%; /* Ensures the SVG scales to fit the container */
+			height: 100%; /* Ensures the SVG scales to fit the container */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden; /* Prevents overflow if the SVG is too large */
+		}
+
+		#svgContent svg {
+			max-width: 100%; /* Ensures the SVG does not exceed the container width */
+			max-height: 100%; /* Ensures the SVG does not exceed the container height */
+			height: auto; /* Maintains the aspect ratio */
+		}
+
+		/* Dark mode */
+		@media (prefers-color-scheme: dark) {
+			#svgPreview {
+				background: #2a2a2a;
+				border-color: #444;
+				color: #aaa;
+			}
 		}
 	</style>
 </head>
@@ -243,7 +296,7 @@
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			ctx.drawImage(img, 0, 0);
 
-			document.getElementById('pngPreview').innerHTML = '<h2>PNG Preview</h2><img src="' + dataURL + '" />';
+			document.getElementById('pngPreview').innerHTML = '<h2>Original PNG</h2><img src="' + dataURL + '" />';
 
 			var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			var svgString = ImageTracer.imagedataToSVG(imageData, settings);
