@@ -25,6 +25,10 @@
 			min-width: 150px;
 		}
 		#pngPreview, #svgPreview {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start; /* Ensures the heading stays at the top */
+			align-items: center; /* Centers content horizontally */
 			margin-top: 1rem;
 			margin-bottom: 1rem;
 			padding: 2rem;
@@ -35,10 +39,6 @@
 			cursor: pointer;
 			transition: background 0.2s ease;
 			flex: 1 1 300px;
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-start;
-			align-items: center;
 			height: 400px; /* Constrain the height of the boxes */
 			overflow: hidden; /* Prevent content overflow */
 		}
@@ -49,6 +49,19 @@
 
 		#svgPreview {
 			border: 2px solid #ccc;
+		}
+
+		#pngContent, #svgContent {
+			display: flex;
+			justify-content: center; /* Centers content horizontally */
+			align-items: center; /* Centers content vertically */
+			width: 100%;
+			height: 100%;
+		}
+
+		#pngContent p, #svgContent p {
+			margin: 0;
+			color: #777;
 		}
 
 		#pngPreview h2, #svgPreview h2 {
