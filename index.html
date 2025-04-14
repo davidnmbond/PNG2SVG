@@ -39,8 +39,8 @@
 			cursor: pointer;
 			transition: background 0.2s ease;
 			flex: 1 1 300px;
-			height: 400px; /* Constrain the height of the boxes */
-			overflow: hidden; /* Prevent content overflow */
+			min-height: 200px; /* Ensures a minimum height for smaller images */
+			overflow: hidden; /* Prevents content overflow */
 		}
 
 		#pngPreview {
@@ -56,12 +56,12 @@
 			justify-content: center; /* Centers content horizontally */
 			align-items: center; /* Centers content vertically */
 			width: 100%;
-			height: 100%;
 		}
 
-		#pngContent p, #svgContent p {
-			margin: 0;
-			color: #777;
+		#pngContent img, #svgContent svg {
+			max-width: 100%; /* Ensures the image or SVG does not exceed the container width */
+			max-height: 100%; /* Ensures the image or SVG does not exceed the container height */
+			height: auto; /* Maintains the aspect ratio */
 		}
 
 		#pngPreview h2, #svgPreview h2 {
