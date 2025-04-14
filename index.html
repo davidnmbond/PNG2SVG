@@ -39,6 +39,8 @@
 			flex-direction: column;
 			justify-content: flex-start;
 			align-items: center;
+			height: 400px; /* Constrain the height of the boxes */
+			overflow: hidden; /* Prevent content overflow */
 		}
 
 		#pngPreview {
@@ -47,7 +49,6 @@
 
 		#svgPreview {
 			border: 2px solid #ccc;
-			overflow: hidden; /* Prevents overflow of the SVG */
 		}
 
 		#pngPreview h2, #svgPreview h2 {
@@ -145,6 +146,15 @@
 			align-items: center;
 		}
 
+		#pngContent {
+			width: 100%; /* Ensures the PNG scales to fit the container */
+			height: 100%; /* Ensures the PNG scales to fit the container */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden; /* Prevents overflow if the PNG is too large */
+		}
+
 		#svgContent {
 			width: 100%; /* Ensures the SVG scales to fit the container */
 			height: 100%; /* Ensures the SVG scales to fit the container */
@@ -167,6 +177,36 @@
 				border-color: #444;
 				color: #aaa;
 			}
+		}
+
+		#messageBox {
+			margin-top: 2rem;
+			padding: 1rem;
+			border: 2px solid #ccc;
+			border-radius: 8px;
+			background: #f9f9f9;
+			color: #555;
+			text-align: center;
+			font-size: 1rem;
+		}
+
+		/* Dark mode */
+		@media (prefers-color-scheme: dark) {
+			#messageBox {
+				background: #2a2a2a;
+				border-color: #444;
+				color: #ddd;
+			}
+		}
+
+		#messageBox a {
+			color: #0078d4;
+			text-decoration: none;
+			font-weight: bold;
+		}
+
+		#messageBox a:hover {
+			text-decoration: underline;
 		}
 	</style>
 </head>
@@ -197,13 +237,21 @@
 
 	<div id="container">
 		<div id="pngPreview" class="preview">
-			<h2 id="PngTitle">Original PNG</h2>
-			<p>Drag PNG file here.</p>
+			<h2 id="OriginalPNG">Original PNG</h2>
+			<div id="pngContent"><p>Drag PNG file here.</p></div>
 		</div>
 		<div class="preview" id="svgPreview">
 			<h2>SVG Preview</h2>
 			<div id="svgContent"><p>No SVG generated yet.</p></div>
 		</div>
+	</div>
+
+	<div id="messageBox" style="display: none;">
+		<p>
+			Now that you have an SVG, you will likely need to tidy it up. 
+			<a href="https://inkscape.org/" target="_blank" rel="noopener noreferrer">Inkscape</a> 
+			is a free vector editing tool that can help you.
+		</p>
 	</div>
 
 	<canvas id="canvas" style="display:none;"></canvas>
@@ -311,6 +359,9 @@
 			// Enable the download button
 			var downloadButton = document.getElementById('downloadButton');
 			downloadButton.disabled = false;
+
+			// Show the message box
+			document.getElementById('messageBox').style.display = 'block';
 		};
 		img.src = dataURL;
 	}
