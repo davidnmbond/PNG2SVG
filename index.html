@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>PNG to SVG Converter</title>
+	<title>Image Vectorizer (PNG/JPG/BMP to SVG)</title>
 	<style>
 		body {
 			font-family: sans-serif;
@@ -40,7 +40,8 @@
 			transition: background 0.2s ease;
 			flex: 1 1 300px;
 			min-height: 200px; /* Ensures a minimum height for smaller images */
-			overflow: hidden; /* Prevents content overflow */
+			overflow: auto;
+			max-height: 50vh; /* Limits the height to 50% of the viewport height */
 		}
 
 		#pngPreview {
@@ -58,9 +59,17 @@
 			width: 100%;
 		}
 
-		#pngContent img, #svgContent svg {
+		#pngContent img {
+			max-width: 100%;
+			max-height: 50vh; /* Limits the input image height to 50% of the viewport height */
+			width: auto;
+			height: auto;
+		}
+
+		#svgContent svg {
 			max-width: 100%; /* Ensures the image or SVG does not exceed the container width */
-			max-height: 100%; /* Ensures the image or SVG does not exceed the container height */
+			max-height: 50vh; /* Ensures the image or SVG does not exceed the container height */
+			width: auto;
 			height: auto; /* Maintains the aspect ratio */
 		}
 
@@ -132,17 +141,18 @@
 			}
 		#svgContent {
 			width: 100%; /* Ensures the SVG scales to fit the container */
-			height: 100%; /* Ensures the SVG scales to fit the container */
+			height: auto; /* Allow the container's height to adjust */
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			overflow: hidden; /* Prevents overflow if the SVG is too large */
+			overflow: auto; /* Scroll if needed */
 		}
 
 		#svgContent svg {
-			width: 100%; /* Ensures the SVG scales to fit the container width */
-			height: auto; /* Maintains the aspect ratio */
-			max-height: 100%; /* Ensures the SVG does not exceed the container height */
+			max-width: 100%; /* SVG will never exceed the container's width */
+			max-height: 50vh; /* Limits the SVG height to 50% of the viewport height */
+			width: auto; /* Maintain intrinsic width */
+			height: auto; /* Maintain the aspect ratio */
 		}
 
 		#svgPreview {
@@ -166,21 +176,6 @@
 			justify-content: center;
 			align-items: center;
 			overflow: hidden; /* Prevents overflow if the PNG is too large */
-		}
-
-		#svgContent {
-			width: 100%; /* Ensures the SVG scales to fit the container */
-			height: 100%; /* Ensures the SVG scales to fit the container */
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			overflow: hidden; /* Prevents overflow if the SVG is too large */
-		}
-
-		#svgContent svg {
-			max-width: 100%; /* Ensures the SVG does not exceed the container width */
-			max-height: 100%; /* Ensures the SVG does not exceed the container height */
-			height: auto; /* Maintains the aspect ratio */
 		}
 
 		/* Dark mode */
@@ -221,11 +216,26 @@
 		#messageBox a:hover {
 			text-decoration: underline;
 		}
+
+        /* Spinner styles */
+        #spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #0078d4;
+            background: rgba(255,255,255,0.9);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            z-index: 9999; /* Increased the z-index */
+        }
 	</style>
 </head>
 <body>
-	<h1>PNG to SVG Converter</h1>
-	<input type="file" id="fileInput" accept="image/png" style="display:none;" />
+	<h1>Image Vectorizer (PNG/JPG/BMP to SVG)</h1>
+	<input type="file" id="fileInput" accept="image/png, image/jpeg, image/bmp" style="display:none;" />
 	<div id="controls">
 		<div class="control">
 			<label for="ltres">Line Threshold (ltres): <span id="ltresVal">1</span></label>
@@ -250,8 +260,8 @@
 
 	<div id="container">
 		<div id="pngPreview" class="preview">
-			<h2 id="OriginalPNG">Original PNG</h2>
-			<div id="pngContent"><p>Drag PNG file here.</p></div>
+			<h2 id="OriginalPNG">Original PNG/JPG/BMP</h2>
+			<div id="pngContent"><p>Drag original image file here.</p></div>
 		</div>
 		<div class="preview" id="svgPreview">
 			<h2>SVG Preview</h2>
@@ -266,6 +276,8 @@
 			is a free vector editing tool that can help you.
 		</p>
 	</div>
+
+	<div id="spinner" style="display: none;">Processing...</div>
 
 	<canvas id="canvas" style="display:none;"></canvas>
 
@@ -331,7 +343,8 @@
 	pngPreview.addEventListener('drop', function(e)
 	{
 		const file = e.dataTransfer.files[0];
-		if (file && file.type === 'image/png') handleFile(file);
+		if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/bmp'))
+			handleFile(file);
 	});
 
 	function handleFile(file)
@@ -347,6 +360,9 @@
 
 	function loadImageAndTrace(dataURL)
 	{
+		// Show spinner
+		document.getElementById('spinner').style.display = 'block';
+
 		var img = new Image();
 		img.onload = function()
 		{
@@ -357,7 +373,8 @@
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			ctx.drawImage(img, 0, 0);
 
-			document.getElementById('pngPreview').innerHTML = '<h2>Original PNG</h2><img src="' + dataURL + '" />';
+			// Change header to a more generic title
+			document.getElementById('pngPreview').innerHTML = '<h2>Original Image</h2><img src="' + dataURL + '" />';
 
 			var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			var svgString = ImageTracer.imagedataToSVG(imageData, settings);
@@ -372,6 +389,9 @@
 			// Enable the download button
 			var downloadButton = document.getElementById('downloadButton');
 			downloadButton.disabled = false;
+
+			// Hide spinner after processing is complete
+			document.getElementById('spinner').style.display = 'none';
 
 			// Show the message box
 			document.getElementById('messageBox').style.display = 'block';
