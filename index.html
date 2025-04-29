@@ -235,7 +235,7 @@
 </head>
 <body>
 	<h1>Image Vectorizer (PNG/JPG/BMP to SVG)</h1>
-	<input type="file" id="fileInput" accept="image/png, image/jpeg, image/bmp" style="display:none;" />
+	<input type="file" id="fileInput" accept="image/png, image/jpeg, image/bmp, image/webp" style="display:none;" />
 	<div id="controls">
 		<div class="control">
 			<label for="ltres">Line Threshold (ltres): <span id="ltresVal">1</span></label>
@@ -260,7 +260,7 @@
 
 	<div id="container">
 		<div id="pngPreview" class="preview">
-			<h2 id="OriginalPNG">Original PNG/JPG/BMP</h2>
+			<h2 id="OriginalPNG">Original PNG/JPG/BMP/WEBP</h2>
 			<div id="pngContent"><p>Drag original image file here.</p></div>
 		</div>
 		<div class="preview" id="svgPreview">
@@ -343,7 +343,7 @@
 	pngPreview.addEventListener('drop', function(e)
 	{
 		const file = e.dataTransfer.files[0];
-		if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/bmp'))
+		if (file && (['image/png', 'image/jpeg', 'image/bmp', 'image/webp'].includes(file.type)))
 			handleFile(file);
 	});
 
